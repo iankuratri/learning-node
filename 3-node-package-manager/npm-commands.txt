@@ -1,0 +1,20 @@
+npm list - to see list of all the installed dependencies
+npm list --depth=0 - to see only core dependencies of your app
+
+npm view package-name - to see the package.json file of a package 
+(e.g. npm view mongoose)
+
+npm view package-name key-in-pakage.json - to see a particular field of a package in package.json
+(e.g. npm view mongoose dependencies)
+(e.g. npm view mongoose versions)
+
+npm outdated - to check the outdated packages
+npm update - to update outdated packages to Wanted versions
+
+npm i npm-check-updates (to install package npm-check-updates) - upgrades your package.json dependencies to the latest versions, ignoring specified versions
+npm-check-updates - to check all the oudated packages
+ncu -u - to upgrade package.json to latest version of packages
+
+after run
+
+npm i - to install all the pakage dependencies
