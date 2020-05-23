@@ -1,11 +1,12 @@
 const Joi = require("@hapi/joi");
+const morgan = require("morgan");
+const helmet = require("helmet");
 const logger = require("./middleware/logger");
 const authenticate = require("./middleware/authenticate");
 const express = require("express");
 const app = express();
 
 // built-in middleware function
-
 // It parses incoming requests with JSON payloads
 app.use(express.json());
 // It parses incoming requests with urlencoded payloads
@@ -13,8 +14,19 @@ app.use(express.urlencoded({ extended: true }));
 // It serves static files
 app.use(express.static("public"));
 
-// custom middleware fucntion
+// third-party middleware
+// Helps secure your apps by setting various HTTP headers.
+app.use(helmet());
 
+// environment varibles
+// to get env - app.get("env") or process.env
+if (app.get("env") === "development") {
+  // HTTP request logger.
+  app.use(morgan("tiny"));
+  console.log("Morgon is logging...");
+}
+
+// custom middleware fucntion
 app.use(logger);
 app.use(authenticate);
 
@@ -25,7 +37,6 @@ const courses = [
 ];
 
 // get requests
-
 app.get("/", (req, res) => {
   res.send("Hello World");
 });
@@ -35,7 +46,6 @@ app.get("/api/courses", (req, res) => {
 });
 
 // route parameters
-
 // apiUrl: "/api/courses/1"
 app.get("/api/courses/:id", (req, res) => {
   const course = findCourse(req.params.id);
@@ -50,14 +60,12 @@ app.get("/api/courses/:id", (req, res) => {
 // });
 
 // query params
-
 // apiUrl: "/api/posts/2018/1?sortBy=name"
 app.get("/api/posts/:year/:month", (req, res) => {
   res.send(req.query);
 });
 
 // post request
-
 app.post("/api/courses", (req, res) => {
   const { error } = validateCourse(req.body);
   if (error) return res.status(400).send(error.details[0].message);
@@ -71,7 +79,6 @@ app.post("/api/courses", (req, res) => {
 });
 
 // put request
-
 app.put("/api/courses/:id", (req, res) => {
   const course = findCourse(req.params.id);
   if (!course)
@@ -85,7 +92,6 @@ app.put("/api/courses/:id", (req, res) => {
 });
 
 // delete request
-
 app.delete("/api/courses/:id", (req, res) => {
   const course = findCourse(req.params.id);
   if (!course)
@@ -98,7 +104,6 @@ app.delete("/api/courses/:id", (req, res) => {
 });
 
 // common functions
-
 function findCourse(id) {
   return courses.find((c) => c.id === parseInt(id));
 }
