@@ -1,8 +1,15 @@
 const Joi = require("@hapi/joi");
+const logger = require("./middleware/logger");
+const authenticate = require("./middleware/authenticate");
 const express = require("express");
 const app = express();
 
+// inbuilt middleware function
 app.use(express.json());
+
+// custom middleware fucntion
+app.use(logger);
+app.use(authenticate);
 
 const courses = [
   { id: 1, name: "course1" },
