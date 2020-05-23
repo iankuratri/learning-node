@@ -4,10 +4,17 @@ const authenticate = require("./middleware/authenticate");
 const express = require("express");
 const app = express();
 
-// inbuilt middleware function
+// built-in middleware function
+
+// It parses incoming requests with JSON payloads
 app.use(express.json());
+// It parses incoming requests with urlencoded payloads
+app.use(express.urlencoded({ extended: true }));
+// It serves static files
+app.use(express.static("public"));
 
 // custom middleware fucntion
+
 app.use(logger);
 app.use(authenticate);
 
