@@ -1,4 +1,5 @@
 const Joi = require("@hapi/joi");
+const config = require("config");
 const morgan = require("morgan");
 const helmet = require("helmet");
 const logger = require("./middleware/logger");
@@ -17,6 +18,11 @@ app.use(express.static("public"));
 // third-party middleware
 // Helps secure your apps by setting various HTTP headers.
 app.use(helmet());
+
+// configuration
+console.log("Application Name: ", config.get("name"));
+console.log("Mail Server: ", config.get("mail.host"));
+// console.log("Mail Password: ", config.get("mail.password"));
 
 // environment varibles
 // to get env - app.get("env") or process.env
