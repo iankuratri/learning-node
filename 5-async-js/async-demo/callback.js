@@ -1,4 +1,5 @@
-console.log("Before");
+// Callback: A callback function is a function passed into another function as an argument,
+// which is then invoked inside the outer function to complete some kind of routine or action.
 
 getUser(1, fetchRepositories);
 
@@ -13,8 +14,6 @@ function fetchCommits(repos) {
 function displayCommits(commits) {
   console.log("Commits:", commits);
 }
-
-console.log("After");
 
 function getUser(id, callback) {
   // async code
