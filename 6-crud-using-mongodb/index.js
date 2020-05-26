@@ -71,7 +71,20 @@ async function getCourse() {
    * .and([{ author: "Mosh", isPublished: true }])
    */
 
+  // Regular Expressions
+
+  // Starts with Mosh (use ^ in beginning)
+  // .find({ author: /^Mosh/ })
+
+  // Ends with Hamedani (use $ in end)
+  // .find({ author: /Hamedani$/ })
+
+  // Contains Mosh (use .* in begining and end, i to ignore case sensitivity)
+  // .find({ author: /.*Mosh.*/i })
+
   const courses = await Course.find({ author: "Mosh", isPublished: true })
+
+    .find({ author: /^Mosh/ })
     .limit(10)
     .sort({ name: 1 })
     .select({ name: 1, tags: 1 });
