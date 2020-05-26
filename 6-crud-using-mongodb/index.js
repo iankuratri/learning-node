@@ -87,6 +87,21 @@ async function getCourse() {
     .sort({ name: 1 })
     .select({ name: 1, tags: 1 });
 
+  /**
+   * To get the number of documents found
+   * .countDocuments();
+   */
+
+  /**
+   * For pagination
+   *
+   * const pageNumber = 2;
+   * const pageSize = 10;
+   *
+   * .skip((pageNumber - 1) * pageSize)
+   * .limit(pageSize)
+   */
+
   console.log(courses);
 }
 getCourse();
