@@ -140,7 +140,7 @@ async function updateCourse(id) {
       id,
       {
         $set: {
-          name: "React Course",
+          name: "Redux Course",
           author: "Mosh Hamedani",
         },
       },
@@ -153,4 +153,17 @@ async function updateCourse(id) {
   }
 }
 
-updateCourse("5ecccc75c2e3101f60aa22c7");
+// updateCourse("5ecccc75c2e3101f60aa22c7");
+
+async function removeCourse(id) {
+  /**
+   * can use these too
+   *
+   * deleteMany()
+   * findByIdAndRemove()
+   */
+  const result = await Course.deleteOne({ _id: id });
+  console.log(result);
+}
+
+// removeCourse("5ecccc75c2e3101f60aa22c7");
