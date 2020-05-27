@@ -104,4 +104,53 @@ async function getCourse() {
 
   console.log(courses);
 }
-getCourse();
+
+// getCourse();
+
+async function updateCourse(id) {
+  /**
+   * Approach: Query first
+   * findById()
+   * Modify its properties
+   * save()
+   */
+
+  // try {
+  //   const course = await Course.findById(id);
+
+  //   course.set({
+  //     name: "React Course",
+  //     author: "Stephen Grider",
+  //   });
+
+  //   const result = await course.save();
+  //   console.log(result);
+  // } catch (err) {
+  //   console.log("Error:", err.message);
+  // }
+
+  /**
+   * Approach: Update first
+   * Update directly
+   * Optionally: get the updated document
+   */
+
+  try {
+    const course = await Course.findByIdAndUpdate(
+      id,
+      {
+        $set: {
+          name: "React Course",
+          author: "Mosh Hamedani",
+        },
+      },
+      { new: true }
+    );
+
+    console.log(course);
+  } catch (err) {
+    console.log("Error:", err.message);
+  }
+}
+
+updateCourse("5ecccc75c2e3101f60aa22c7");
