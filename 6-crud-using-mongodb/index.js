@@ -11,11 +11,31 @@ mongoose
 
 // Schema
 const courseSchema = new mongoose.Schema({
-  name: String,
+  // mongoose validation
+  name: {
+    type: String,
+    required: true,
+    minlength: 5,
+    maxlength: 255,
+    // match: /pattern/,
+  },
+  category: {
+    type: String,
+    enum: ["web", "mobile", "network"],
+    required: true,
+  },
   author: String,
   tags: [String],
   date: { type: Date, default: Date.now },
   isPublished: Boolean,
+  price: {
+    type: Number,
+    min: 10,
+    max: 100,
+    required: function () {
+      return this.isPublished;
+    },
+  },
 });
 
 // Model
@@ -29,12 +49,18 @@ async function createCourse() {
     author: "Mosh",
     tags: ["angular", "frontend"],
     isPublished: true,
+    price: 10,
+    category: "web",
   });
 
-  const result = await course.save();
-  console.log(result);
+  try {
+    const result = await course.save();
+    console.log(result);
+  } catch (err) {
+    console.log(err.message);
+  }
 }
-// createCourse();
+createCourse();
 
 async function getCourse() {
   /**
