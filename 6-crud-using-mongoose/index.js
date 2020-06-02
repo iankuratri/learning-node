@@ -23,6 +23,9 @@ const courseSchema = new mongoose.Schema({
     type: String,
     enum: ["web", "mobile", "network"],
     required: true,
+    lowercase: true,
+    // uppercase: true,
+    // trim: true
   },
   author: String,
   tags: {
@@ -52,6 +55,9 @@ const courseSchema = new mongoose.Schema({
     required: function () {
       return this.isPublished;
     },
+    // to change value when saving or retrieving from db
+    get: (v) => Math.round(v),
+    set: (v) => Math.round(v),
   },
 });
 
@@ -77,7 +83,7 @@ async function createCourse() {
     console.log(err.message);
   }
 }
-createCourse();
+// createCourse();
 
 async function getCourse() {
   /**
