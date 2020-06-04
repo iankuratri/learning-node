@@ -3,17 +3,9 @@ const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
 
-mongoose
-  .connect("mongodb://localhost:27017/vidly-app", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => console.log("Connected to MongoDB."))
-  .catch((err) => console.error("Could not connect to MongoDB...", err));
-
 // Schema
 const genreSchema = new mongoose.Schema({
-  name: { type: string, required: true },
+  name: { type: String, required: true },
 });
 
 // Model
@@ -25,43 +17,41 @@ const genres = [
   { id: 3, name: "Thriller" },
 ];
 
-// add a genre to db
-async function createGenre() {
-  const genre = new Genre({ name: "Sci-Fi" });
-  try {
-    const result = await genre.save();
-    console.log(result);
-  } catch (err) {
-    console.log(err.message);
-  }
-}
-createGenre();
-
 // get genres
 router.get("/", async (req, res) => {
-  res.send(genres);
+  try {
+    const genres = await Genre.find().sort({ name: 1 });
+    if (!genres) return res.res.status(404).send("No genre found.");
+    res.send(genres);
+  } catch (err) {
+    res.send(err.message);
+  }
 });
 
 // get single genre using id as route param
-router.get("/:id", (req, res) => {
-  const genre = findGenre(req.params.id);
-  if (!genre) return res.status(404).send("Genre with given ID was not found.");
-
-  res.send(genre);
+router.get("/:id", async (req, res) => {
+  try {
+    const genre = await Genre.findById(req.params.id);
+    if (!genre)
+      return res.status(404).send("Genre with given ID was not found.");
+    res.send(genre);
+  } catch (err) {
+    res.send(err.message);
+  }
 });
 
 // adding new genre
-router.post("/", (req, res) => {
+router.post("/", async (req, res) => {
   const { error } = validateGenre(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
-  const genre = {
-    id: genres.length + 1,
-    name: req.body.name,
-  };
-  genres.push(genre);
-
-  res.send(genre);
+  const genre = new Genre({ name: req.body.name });
+  try {
+    const result = await genre.save();
+    res.send(result);
+  } catch (err) {
+    res.send(err.message);
+  }
 });
 
 // updating genre using id as route param
