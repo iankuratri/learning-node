@@ -21,7 +21,7 @@ const genres = [
 router.get("/", async (req, res) => {
   try {
     const genres = await Genre.find().sort({ name: 1 });
-    if (!genres) return res.res.status(404).send("No genre found.");
+    if (!genres) return res.status(404).send("No genre found.");
     res.send(genres);
   } catch (err) {
     res.send(err.message);
