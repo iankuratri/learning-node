@@ -3,6 +3,10 @@ const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
 
+// Make Mongoose use `findOneAndUpdate()`. Note that this option is `true`
+// by default, you need to set it to false.
+mongoose.set("useFindAndModify", false);
+
 // Schema
 const genreSchema = new mongoose.Schema({
   name: { type: String, required: true },
@@ -55,33 +59,37 @@ router.post("/", async (req, res) => {
 });
 
 // updating genre using id as route param
-router.put("/:id", (req, res) => {
-  const genre = findGenre(req.params.id);
-  if (!genre) return res.status(404).send("Genre with given ID was not found.");
-
+router.put("/:id", async (req, res) => {
   const { error } = validateGenre(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
-  genre.name = req.body.name;
-  res.send(genre);
+  try {
+    const genre = await Genre.findByIdAndUpdate(
+      req.params.id,
+      { name: req.body.name },
+      { new: true }
+    );
+    if (!genre)
+      return res.status(404).send("Genre with given ID was not found.");
+    res.send(genre);
+  } catch (err) {
+    res.send(err.message);
+  }
 });
 
 // delete genre using id as route param
-router.delete("/:id", (req, res) => {
-  const genre = findGenre(req.params.id);
-  if (!genre) return res.status(404).send("Genre with given ID was not found.");
-
-  const index = genres.indexOf(genre);
-  genres.splice(index, 1);
-
-  res.send(genres);
+router.delete("/:id", async (req, res) => {
+  try {
+    const genre = await Genre.findByIdAndRemove(req.params.id);
+    if (!genre)
+      return res.status(404).send("Genre with given ID was not found.");
+    res.send(genre);
+  } catch (err) {
+    res.send(err.message);
+  }
 });
 
-// common functions
-function findGenre(id) {
-  return genres.find((g) => g.id === parseInt(id));
-}
-
+// common function
 function validateGenre(genre) {
   const schema = Joi.object({
     name: Joi.string().required(),
