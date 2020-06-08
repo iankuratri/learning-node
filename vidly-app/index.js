@@ -1,8 +1,6 @@
 const mongoose = require("mongoose");
 const express = require("express");
 const app = express();
-const genres = require("./routes/genres");
-const home = require("./routes/home");
 
 mongoose
   .connect("mongodb://localhost:27017/vidly-app", {
@@ -12,14 +10,24 @@ mongoose
   .then(() => console.log("Connected to MongoDB."))
   .catch((err) => console.error("Could not connect to MongoDB...", err));
 
+// Make Mongoose use `findOneAndUpdate()`. Note that this option is `true`
+// by default, you need to set it to false.
+mongoose.set("useFindAndModify", false);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// route for home
+const home = require("./routes/home");
+app.use("/", home);
+
 // route for genres
+const genres = require("./routes/genres");
 app.use("/api/genres", genres);
 
-// route for home
-app.use("/", home);
+// route for customers
+const customers = require("./routes/customers");
+app.use("/api/customers", customers);
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`Listening on port ${port}...`));

@@ -3,10 +3,6 @@ const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
 
-// Make Mongoose use `findOneAndUpdate()`. Note that this option is `true`
-// by default, you need to set it to false.
-mongoose.set("useFindAndModify", false);
-
 // Schema
 const genreSchema = new mongoose.Schema({
   name: { type: String, required: true, minlength: 5, maxlength: 50 },
@@ -15,17 +11,11 @@ const genreSchema = new mongoose.Schema({
 // Model
 const Genre = mongoose.model("Genre", genreSchema);
 
-const genres = [
-  { id: 1, name: "Action" },
-  { id: 2, name: "Comedy" },
-  { id: 3, name: "Thriller" },
-];
-
 // get genres
 router.get("/", async (req, res) => {
   try {
     const genres = await Genre.find().sort({ name: 1 });
-    if (!genres) return res.status(404).send("No genre found.");
+    if (!genres.length) return res.status(404).send("No genre found.");
     res.send(genres);
   } catch (err) {
     res.send(err.message);
