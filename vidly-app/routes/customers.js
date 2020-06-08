@@ -1,15 +1,6 @@
-const Joi = require("@hapi/joi");
 const express = require("express");
 const router = express.Router();
-const mongoose = require("mongoose");
-
-const customerSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  phone: { type: String, required: true },
-  isGold: { type: Boolean, required: true },
-});
-
-const Customer = mongoose.model("Customer", customerSchema);
+const { Customer, validateCustomer } = require("./../models/customer");
 
 // for getting all the customers
 router.get("/", async (req, res) => {
@@ -36,7 +27,7 @@ router.get("/:id", async (req, res) => {
 
 // for adding a new customer
 router.post("/", async (req, res) => {
-  const { error } = validatedCustomer(req.body);
+  const { error } = validateCustomer(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
   const customer = new Customer({ ...req.body });
@@ -51,7 +42,7 @@ router.post("/", async (req, res) => {
 
 // for editing customer details
 router.put("/:id", async (req, res) => {
-  const { error } = validatedCustomer(req.body);
+  const { error } = validateCustomer(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
   try {
@@ -79,16 +70,5 @@ router.delete("/:id", async (req, res) => {
     res.send(err.message);
   }
 });
-
-// common function
-function validatedCustomer(customer) {
-  const schema = Joi.object({
-    name: Joi.string().required(),
-    phone: Joi.string().required(),
-    isGold: Joi.boolean().required(),
-  });
-
-  return schema.validate(customer);
-}
 
 module.exports = router;
