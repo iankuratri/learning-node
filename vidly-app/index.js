@@ -33,5 +33,9 @@ app.use("/api/customers", customers);
 const movies = require("./routes/movies");
 app.use("/api/movies", movies);
 
+// route for rentals
+const rentals = require("./routes/rentals");
+app.use("/api/rentals", rentals);
+
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`Listening on port ${port}...`));

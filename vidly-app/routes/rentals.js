@@ -1,8 +1,12 @@
 const express = require("express");
 const router = express.Router();
+const mongoose = require("mongoose");
 const { Rental, validateRental } = require("./../models/rental");
 const { Customer } = require("./../models/customer");
 const { Movie } = require("./../models/movie");
+const Fawn = require("fawn");
+
+Fawn.init(mongoose);
 
 // getting all rentals
 router.get("/", async (req, res) => {
@@ -11,7 +15,7 @@ router.get("/", async (req, res) => {
     if (!rentals.length) return res.status(404).send("No rental found.");
     res.send(rentals);
   } catch (err) {
-    res.send(err.message);
+    res.status(500).send(err.message);
   }
 });
 
@@ -44,13 +48,25 @@ router.post("/", async (req, res) => {
       },
     });
 
-    const result = rental.save();
+    /**
+     * To handle Transactions (saving two things in db at once) we
+     * are using fawn library here, instead of the code below.
+     *
+     * const result = rental.save();
+     * movie.numberInStock--;
+     * movie.save();
+     */
 
-    movie.numberInStock--;
-    movie.save();
+    Fawn()
+      .Task()
+      .save("rentals", rental)
+      .update("movies", { _id: movie._id }, { $inc: { numberInStock: -1 } })
+      .run();
 
     res.send(rental);
   } catch (err) {
-    res.send(err.message);
+    res.status(500).send(err.message);
   }
 });
+
+module.exports = router;
