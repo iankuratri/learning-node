@@ -1,10 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
+const Fawn = require("fawn");
 const { Rental, validateRental } = require("./../models/rental");
 const { Customer } = require("./../models/customer");
 const { Movie } = require("./../models/movie");
-const Fawn = require("fawn");
 
 Fawn.init(mongoose);
 
@@ -14,6 +14,18 @@ router.get("/", async (req, res) => {
     const rentals = await Rental.find().sort({ dateOut: -1 });
     if (!rentals.length) return res.status(404).send("No rental found.");
     res.send(rentals);
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
+
+// get particular rental using id as route param
+router.get("/:id", async (req, res) => {
+  try {
+    const rental = await Rental.findById(req.params.id);
+    if (!rental)
+      return res.status(404).send("Rental with given ID was not found.");
+    res.send(rental);
   } catch (err) {
     res.status(500).send(err.message);
   }
@@ -57,8 +69,9 @@ router.post("/", async (req, res) => {
      * movie.save();
      */
 
-    Fawn()
-      .Task()
+    const task = Fawn.Task();
+
+    task
       .save("rentals", rental)
       .update("movies", { _id: movie._id }, { $inc: { numberInStock: -1 } })
       .run();
@@ -66,6 +79,7 @@ router.post("/", async (req, res) => {
     res.send(rental);
   } catch (err) {
     res.status(500).send(err.message);
+    console.log(err);
   }
 });
 
