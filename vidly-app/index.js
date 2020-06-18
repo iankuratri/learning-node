@@ -43,5 +43,9 @@ app.use("/api/rentals", rentals);
 const users = require("./routes/users");
 app.use("/api/users", users);
 
+// route for auth
+const auth = require("./routes/auth");
+app.use("/api/auth", auth);
+
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`Listening on port ${port}...`));
