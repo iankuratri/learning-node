@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const bcrypt = require("bcrypt");
 const { User, validateUser } = require("./../models/user");
 
 // get all users
@@ -30,11 +31,21 @@ router.post("/", async (req, res) => {
   if (error) return res.status(400).send(error.details[0].message);
 
   const { name, email, password } = req.body;
-  const user = new User({ name, email, password });
 
   try {
+    let user = await User.findOne({ email });
+    if (user) return res.status(400).send("User already registered.");
+
+    user = new User({ name, email, password });
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(user.password, salt);
     await user.save();
-    res.send(user);
+
+    const token = user.generateAuthToken();
+    res.header("x-auth-tokrn", token).send({
+      name: user.name,
+      email: user.email,
+    });
   } catch (error) {
     res.status(500).send(error.message);
   }
