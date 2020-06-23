@@ -1,6 +1,7 @@
-function error(req, res, next) {
+function error(err, req, res, next) {
   // Log the exception
-  res.status(500).send("Something failed");
+  console.error(err);
+  res.status(500).send("Something went wrong.");
 }
 
 module.exports = error;

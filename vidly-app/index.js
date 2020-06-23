@@ -1,3 +1,4 @@
+require("express-async-errors");
 const error = require("./middleware/error");
 const Joi = require("@hapi/joi");
 Joi.objectId = require("joi-objectid")(Joi);
