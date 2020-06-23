@@ -1,3 +1,4 @@
+const error = require("./middleware/error");
 const Joi = require("@hapi/joi");
 Joi.objectId = require("joi-objectid")(Joi);
 const mongoose = require("mongoose");
@@ -52,6 +53,9 @@ app.use("/api/users", users);
 // route for auth
 const auth = require("./routes/auth");
 app.use("/api/auth", auth);
+
+// middleware for error handling
+app.use(error);
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`Listening on port ${port}...`));
