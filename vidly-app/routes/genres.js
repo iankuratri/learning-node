@@ -6,7 +6,6 @@ const { Genre, validateGenre } = require("./../models/genre");
 
 // get all genres
 router.get("/", async (req, res) => {
-  // throw new Error("Could not get the genres.");
   const genres = await Genre.find().sort({ name: 1 });
   if (!genres.length) return res.status(404).send("No genre found.");
   res.send(genres);
