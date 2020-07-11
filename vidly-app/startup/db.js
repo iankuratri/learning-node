@@ -8,7 +8,7 @@ module.exports = function () {
       useUnifiedTopology: true,
     })
     .then(() => {
-      console.log("Connected to MongoDB.");
+      // console.log("Connected to MongoDB.");
       winston.info("Connected to MongoDB.");
     });
 

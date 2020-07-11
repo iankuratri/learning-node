@@ -3,29 +3,48 @@ require("winston-mongodb");
 require("express-async-errors");
 
 module.exports = function () {
-  // handle uncaught excepton
+  // handle uncaughtExceptons using process
+
   // process.on("uncaughtException", (ex) => {
-  //   console.log("WE GOT AN UNCAUGHT EXCEPTION");
-  //   winston.error(ex.message, ex);
+  //   console.log("WE GOT AN UNCAUGHT EXCEPTION", ex);
+  //   process.exit(1);
   // });
 
-  winston.handleExceptions(
-    new winston.transports.Console({ colorize: true, prettyPrint: true }),
-    new winston.transports.File({ filename: "uncaughtException.log" })
+  // handle unhandledRejection using process
+
+  // process.on("unhandledRejection", (ex) => {
+  //   console.log("WE GOT AN UNHANDLED REJECTION", ex);
+  //   process.exit(1);
+  // });
+
+  winston.add(
+    new winston.transports.Console({
+      format: winston.format.combine(
+        winston.format.colorize(),
+        winston.format.simple()
+      ),
+      handleExceptions: true,
+      handleRejections: true,
+    })
   );
 
-  // handle unhandledRejection
-  process.on("unhandledRejection", (ex) => {
-    throw ex;
-  });
+  winston.add(
+    new winston.transports.File({
+      level: "error",
+      filename: "logfile.log",
+      handleExceptions: true,
+      handleRejections: true,
+    })
+  );
 
-  winston.add(winston.transports.File, {
-    filename: "logfile.log",
-  });
-
-  winston.add(winston.transports.MongoDB, {
-    db: "mongodb://localhost:27017/vidly-app",
-  });
+  winston.add(
+    new winston.transports.MongoDB({
+      level: "error",
+      db: "mongodb://localhost:27017/vidly-app",
+      handleExceptions: true,
+      handleRejections: true,
+    })
+  );
 
   // for simulating uncaughtException error
   // throw new Error("Something failed during startup.")
